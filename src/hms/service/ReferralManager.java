@@ -61,7 +61,7 @@ public class ReferralManager {
             Path referralOutDir = store.getOutFolder().resolve("referrals");
             Files.createDirectories(referralOutDir);
             Path outFile = referralOutDir.resolve(r.getReferralId() + "_referral_email.txt");
-            Files.write(outFile, emailText.getBytes(StandardCharsets.UTF_8),
+            Files.writeString(outFile, emailText,
                     StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
 
             audit("Processed referral " + r.getReferralId() + " -> wrote " + outFile.getFileName());
@@ -80,8 +80,8 @@ public class ReferralManager {
         Files.createDirectories(outDir);
 
         Path outFile = outDir.resolve(r.getReferralId() + "_referral.txt");
-        Files.write(outFile,
-                text.getBytes(StandardCharsets.UTF_8),
+        Files.writeString(outFile,
+                text,
                 StandardOpenOption.CREATE,
                 StandardOpenOption.TRUNCATE_EXISTING);
 
