@@ -29,6 +29,7 @@ public class PrescriptionsPanel extends JPanel {
         JButton editBtn = new JButton("Edit");
         JButton delBtn = new JButton("Delete");
         JButton refreshBtn = new JButton("Refresh");
+        JButton viewBtn = new JButton("View");
         JButton outputBtn = new JButton("Generate Output");
 
 
@@ -37,12 +38,15 @@ public class PrescriptionsPanel extends JPanel {
         delBtn.addActionListener(_ -> onDelete());
         refreshBtn.addActionListener(_ -> refresh());
         outputBtn.addActionListener(_ -> onGenerateOutput());
+        viewBtn.addActionListener(_ -> onView());
+
 
 
         buttons.add(addBtn);
         buttons.add(editBtn);
         buttons.add(delBtn);
         buttons.add(refreshBtn);
+        buttons.add(viewBtn);
         buttons.add(outputBtn);
 
 
@@ -89,6 +93,45 @@ public class PrescriptionsPanel extends JPanel {
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+
+    private void onView() {
+        int row = table.getSelectedRow();
+        if (row < 0) {
+            JOptionPane.showMessageDialog(this,
+                    "Please select a prescription first.",
+                    "No Selection",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        Prescription p = model.getAt(row);
+
+        String text =
+                "PRESCRIPTION DETAILS\n\n" +
+                        "Prescription ID: " + p.getPrescriptionId() + "\n" +
+                        "Patient ID: " + p.getPatientId() + "\n" +
+                        "Clinician ID: " + p.getClinicianId() + "\n\n" +
+                        "Medication: " + p.getMedicationName() + "\n" +
+                        "Dosage: " + p.getDosage() + "\n" +
+                        "Frequency: " + p.getFrequency() + "\n" +
+                        "Duration (days): " + p.getDurationDays() + "\n" +
+                        "Quantity: " + p.getQuantity() + "\n\n" +
+                        "Instructions: " + safe(p.getInstructions()) + "\n\n" +
+                        "Pharmacy: " + safe(p.getPharmacyName()) + "\n" +
+                        "Status: " + safe(p.getStatus()) + "\n" +
+                        "Issue Date: " + safe(p.getIssueDate()) + "\n" +
+                        "Collection Date: " + safe(p.getCollectionDate()) + "\n";
+
+        JTextArea area = new JTextArea(text, 22, 70);
+        area.setEditable(false);
+        area.setCaretPosition(0);
+
+        JOptionPane.showMessageDialog(this,
+                new JScrollPane(area),
+                "View Prescription: " + p.getPrescriptionId(),
+                JOptionPane.INFORMATION_MESSAGE);
+    }
+
 
     private void onEdit() {
         int row = table.getSelectedRow();
@@ -189,6 +232,10 @@ public class PrescriptionsPanel extends JPanel {
                     JOptionPane.ERROR_MESSAGE);
         }
     }
+    private String safe(String s) {
+        return s == null ? "" : s;
+    }
+
 
 }
 
