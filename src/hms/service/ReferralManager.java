@@ -37,6 +37,11 @@ public class ReferralManager {
         return instance;
     }
 
+    public String previewText(Referral r) {
+        return buildReferralEmail(r);
+    }
+
+
     public void enqueueReferral(Referral r) throws IOException {
         if (isBlank(r.getReferralId())) {
             r.setReferralId(store.referrals().nextId("R"));

@@ -25,25 +25,31 @@ public class ReferralsPanel extends JPanel {
         add(new JScrollPane(table), BorderLayout.CENTER);
 
         JPanel buttons = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JButton addBtn = new JButton("Add (Generate Email)");
+        JButton addBtn = new JButton("Add");
         JButton editBtn = new JButton("Edit");
         JButton delBtn = new JButton("Delete");
         JButton refreshBtn = new JButton("Refresh");
-        JButton outputBtn = new JButton("View / Generate Output");
+        JButton viewBtn = new JButton("View");
+        JButton genBtn = new JButton("Generate Output");
+
 
 
         addBtn.addActionListener(_ -> onAdd());
         editBtn.addActionListener(_ -> onEdit());
         delBtn.addActionListener(_ -> onDelete());
         refreshBtn.addActionListener(_ -> refresh());
-        outputBtn.addActionListener(_ -> onGenerateOutput());
+        viewBtn.addActionListener(_ -> onView());
+        genBtn.addActionListener(_ -> onGenerateOutput());
+
 
 
         buttons.add(addBtn);
         buttons.add(editBtn);
         buttons.add(delBtn);
         buttons.add(refreshBtn);
-        buttons.add(outputBtn);
+        buttons.add(viewBtn);
+        buttons.add(genBtn);
+
 
 
         add(buttons, BorderLayout.NORTH);
@@ -65,7 +71,7 @@ public class ReferralsPanel extends JPanel {
         f.get("last_updated").setText(LocalDate.now().toString());
         f.get("status").setText("Pending");
 
-        int res = SwingForms.showForm(this, "Add Referral (creates text email file)", f);
+        int res = SwingForms.showForm(this, "Add Referral", f);
         if (res != JOptionPane.OK_OPTION) return;
 
         try {
@@ -172,17 +178,11 @@ public class ReferralsPanel extends JPanel {
         Referral r = model.getAt(row);
 
         try {
-            String text = controller.generateOutput(r);
-
-            JTextArea area = new JTextArea(text, 25, 70);
-            area.setEditable(false);
-            area.setCaretPosition(0);
-
+            controller.generateOutput(r); // writes file + audit
             JOptionPane.showMessageDialog(this,
-                    new JScrollPane(area),
-                    "Referral Output: " + r.getReferralId(),
+                    "Referral output generated (data/out/referrals/).",
+                    "Success",
                     JOptionPane.INFORMATION_MESSAGE);
-
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this,
                     ex.getMessage(),
@@ -190,6 +190,32 @@ public class ReferralsPanel extends JPanel {
                     JOptionPane.ERROR_MESSAGE);
         }
     }
+
+    private void onView() {
+        int row = table.getSelectedRow();
+        if (row < 0) {
+            JOptionPane.showMessageDialog(this,
+                    "Please select a referral first.",
+                    "No Selection",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        Referral r = model.getAt(row);
+
+        String text = controller.previewText(r); // preview only
+
+        JTextArea area = new JTextArea(text, 25, 70);
+        area.setEditable(false);
+        area.setCaretPosition(0);
+
+        JOptionPane.showMessageDialog(this,
+                new JScrollPane(area),
+                "Referral: " + r.getReferralId(),
+                JOptionPane.INFORMATION_MESSAGE);
+    }
+
+
 
 
     private void onDelete() {

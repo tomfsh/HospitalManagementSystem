@@ -50,6 +50,11 @@ public class ReferralController {
         return referralManager.generateOutputForExisting(r);
     }
 
+    public String previewText(Referral r) {
+        return referralManager.previewText(r);
+    }
+
+
 }
 
 
