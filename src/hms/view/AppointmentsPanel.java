@@ -97,16 +97,16 @@ public class AppointmentsPanel extends JPanel {
             return;
         }
 
-        Appointment a = model.getAt(row);
+        StringBuilder sb = new StringBuilder("APPOINTMENT DETAILS\n\n");
 
-        String text =
-                "APPOINTMENT DETAILS\n\n" +
-                        "Appointment ID: " + safe(a.getAppointmentId()) + "\n" +
-                        "Patient ID: " + safe(a.getPatientId()) + "\n" +
-                        "Clinician ID: " + safe(a.getClinicianId()) + "\n" +
-                        "Facility ID: " + safe(a.getFacilityId()) + "\n";
+        for (int col = 0; col < model.getColumnCount(); col++) {
+            String colName = model.getColumnName(col);
+            Object value = model.getValueAt(row, col);
 
-        JTextArea area = new JTextArea(text, 18, 70);
+            sb.append(colName).append(": ").append(value == null ? "" : value.toString()).append("\n");
+        }
+
+        JTextArea area = new JTextArea(sb.toString(), 22, 70);
         area.setEditable(false);
         area.setCaretPosition(0);
 
@@ -115,6 +115,7 @@ public class AppointmentsPanel extends JPanel {
                 "View Appointment",
                 JOptionPane.INFORMATION_MESSAGE);
     }
+
 
 
 
